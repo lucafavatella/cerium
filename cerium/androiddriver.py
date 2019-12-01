@@ -95,39 +95,6 @@ class BaseAndroidDriver(Service):
             '-s', self.device_sn, 'shell', 'getprop', 'ro.build.version.sdk')
         return output.strip()
 
-    def root(self) -> None:
-        '''Restart adbd with root permissions.'''
-        output, _ = self._execute('-s', self.device_sn, 'root')
-        if not output:
-            raise PermissionError(
-                f'{self.device_sn!r} does not have root permission.')
-
-    def unroot(self) -> None:
-        '''Restart adbd without root permissions.'''
-        self._execute('-s', self.device_sn, 'unroot')
-
-    def tcpip(self, port: int or str = 5555) -> None:
-        '''Restart adb server listening on TCP on PORT.'''
-        self._execute('-s', self.device_sn, 'tcpip', str(port))
-
-    def get_ip_addr(self) -> str:
-        '''Show IP Address.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'ip', '-f', 'inet', 'addr', 'show', 'wlan0')
-        ip_addr = re.findall(
-            r"\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\b", output)
-        if not ip_addr:
-            raise ConnectionError(
-                'The device is not connected to WLAN or not connected via USB.')
-        return ip_addr[0]
-
-    def auto_connect(self, port: int or str =5555) -> None:
-        '''Connect to a device via TCP/IP automatically.'''
-        host = self.get_ip_addr()
-        self.tcpip(port)
-        self.connect(host, port)
-        print('Now you can unplug the USB cable, and control your device via WLAN.')
-
     def view_focused_activity(self) -> str:
         '''View focused activity.'''
         output, _ = self._execute(
