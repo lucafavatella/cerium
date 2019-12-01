@@ -128,53 +128,6 @@ class BaseAndroidDriver(Service):
         self.connect(host, port)
         print('Now you can unplug the USB cable, and control your device via WLAN.')
 
-    def push(self, local: _PATH = 'LICENSE', remote: _PATH = '/sdcard/LICENSE') -> None:
-        '''Copy local files/directories to device.'''
-        if not os.path.exists(local):
-            raise FileNotFoundError(f'Local {local!r} does not exist.')
-        self._execute('-s', self.device_sn, 'push', local, remote)
-
-    def push_sync(self, local: _PATH = 'LICENSE', remote: _PATH = '/sdcard/LICENSE') -> None:
-        '''Only push files that are newer on the host than the device.'''
-        if not os.path.exists(local):
-            raise FileNotFoundError(f'Local {local!r} does not exist.')
-        self._execute('-s', self.device_sn, 'push', '--sync', local, remote)
-
-    def pull(self, remote: _PATH, local: _PATH) -> None:
-        '''Copy files/directories from device.'''
-        output, _ = self._execute('-s', self.device_sn, 'pull', remote, local)
-        if 'error' in output:
-            raise FileNotFoundError(f'Remote {remote!r} does not exist.')
-
-    def pull_a(self, remote: _PATH, local: _PATH) -> None:
-        '''Copy files/directories from device, and preserve file timestamp and mode.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'pull', '-a', remote, local)
-        if 'error' in output:
-            raise FileNotFoundError(f'Remote {remote!r} does not exist.')
-
-    def sync(self, option: str = 'all') -> None:
-        '''Sync a local build from $ANDROID_PRODUCT_OUT to the device (default all).
-
-        Args:
-            option: 'system', 'vendor', 'oem', 'data', 'all'
-        '''
-        if option in ['system', 'vendor', 'oem', 'data', 'all']:
-            self._execute('-s', self.device_sn, 'sync', option)
-        else:
-            raise ValueError(f'There is no option named: {option!r}.')
-
-    def sync_l(self, option: str = 'all') -> None:
-        '''List but don't copy.
-
-        Args:
-            option: 'system', 'vendor', 'oem', 'data', 'all'
-        '''
-        if option in ['system', 'vendor', 'oem', 'data', 'all']:
-            self._execute('-s', self.device_sn, 'sync', '-l', option)
-        else:
-            raise ValueError('There is no option named: {!r}.'.format(option))
-
     def view_focused_activity(self) -> str:
         '''View focused activity.'''
         output, _ = self._execute(
