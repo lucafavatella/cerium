@@ -42,124 +42,6 @@ class BaseAndroidDriver(Service):
     _temp = os.path.join(tempfile.gettempdir(), 'uidump.xml')
     _nodes = None
 
-    def __init__(self, executable_path: _PATH = 'default', device_sn: str = None, wireless: bool = False, host: str = '192.168.0.3', port: str or int = 5555, service_port: str or int =5037, env: dict = None, service_args: list or tuple = None, dev: bool = False) -> None:
-        '''Creates a new instance of the android driver.
-
-        Starts the service and then creates new instance of android driver.
-
-        Args:
-            executable_path: Path to the executable. The default uses its own executable.
-            device_sn: Device serial number.
-            wireless/host/port: If wireless is True, will connect your device via WLAN driectly.
-                                         The premise is that your device has opened the port and
-                                         you know the device's IP address.
-            service_port: Service port you would like the service to run,
-                                         if left as 0, a free port will be found.
-            env: Environment variables.
-            service_args: List of args to pass to the androiddriver service.
-        '''
-
-        self._dev = dev
-        super(BaseAndroidDriver, self).__init__(executable_path=executable_path,
-                                                port=service_port, env=env, service_args=service_args)
-        self.start()
-        self.device_sn = device_sn
-
-        if wireless:
-            if host and port:
-                self.connect(host, port)
-            else:
-                raise ValueError('You need to specify the HOST and PORT.')
-
-        self.devices_list = self.devices()
-        self._detect_devices()
-
-    def _detect_devices(self) -> None:
-        '''Detect whether devices connected.'''
-        devices_num = len(self.devices_list)
-        if devices_num == 0:
-            raise DeviceConnectionException(
-                'No devices are connected. Please connect the device with USB or via WLAN and turn on the USB debugging option.')
-        elif not self.device_sn and devices_num > 1:
-            raise DeviceConnectionException(
-                f"Multiple devices detected: {' | '.join(self.devices_list)}, please specify device serial number or host.")
-        else:
-            self.device_sn = self.devices_list[0]
-        if self.get_state() == 'offline':
-            raise DeviceConnectionException(
-                'The device is offline. Please reconnect.')
-
-    def start_server(self) -> None:
-        '''Start server.'''
-        self.start()
-
-    def kill_server(self) -> None:
-        '''Kill the server if it is running.'''
-        self.stop()
-
-    def restart_server(self) -> None:
-        '''Restart the server if it is running.'''
-        self.restart()
-
-    def _execute(self, *args: str, **kwargs) -> tuple:
-        '''Execute command.'''
-        process = self.execute(
-            args=args, options=merge_dict(self.options, kwargs))
-        command = ' '.join(process.args)
-        if self._dev:
-            output, error = process.communicate()
-            print(
-                "Debug Information",
-                "Command: {!r}".format(command),
-                "Output: {!r}".format(output.encode('utf-8')),
-                "Error: {!r}".format(error.encode('utf-8')),
-                sep='\n', end='\n{}\n'.format('=' * 80)
-            )
-        return process.communicate()
-
-    # Android Device Information
-    @property
-    def serial_number(self) -> str:
-        '''Show device serial number.'''
-        return self.device_sn
-
-    @classmethod
-    def serial_matcher(cls, serial) -> bool:
-        """Returns a device matcher for the given serial."""
-        return lambda device: device.serial_number == serial
-
-    def get_device_model(self) -> str:
-        '''Show device model.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'getprop', 'ro.product.model')
-        return output.strip()
-
-    def get_battery_info(self) -> dict:
-        '''Show device battery information.
-
-        Returns:
-            A dict. For example:
-
-                {'AC powered': 'false',
-                'Charge counter': '0',
-                'Max charging current': '0',
-                'Max charging voltage': '0',
-                'USB powered': 'false',
-                'Wireless powered': 'false',
-                'health': '2',
-                'level': '67',
-                'present': 'true',
-                'scale': '100',
-                'status': '3',
-                'technology': 'Li-poly',
-                'temperature': '310',
-                'voltage': '3965'}
-        '''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'dumpsys', 'battery')
-        battery_status = re.split('\n  |: ', output[33:].strip())
-        return dict(zip(battery_status[::2], battery_status[1::2]))
-
     def get_resolution(self) -> list:
         '''Show device resolution.'''
         output, _ = self._execute('-s', self.device_sn, 'shell', 'wm', 'size')
@@ -534,7 +416,7 @@ class BaseAndroidDriver(Service):
         '''Simulate finger long press somewhere. (1000ms = 1s)'''
         self._execute('-s', self.device_sn, 'shell',
                       'input', 'swipe', str(x), str(y), str(x), str(y), str(duration))
-                
+
     def send_keys(self, text: str = 'cerium') -> None:
         '''Simulates typing keys.'''
         for char in text:
