@@ -30,7 +30,7 @@ class Commands(object):
         '''Creates a new instance of the Commands.
 
         Args:
-            executable_path: Path to the AndroidDriver. On the Windows platform, the best choice is default.
+            executable_path: Path to the AndroidDriver.
         '''
 
         _default_path = os.path.join(

@@ -67,9 +67,6 @@ setup(
     ],
     package_data={
         'cerium': [
-            'cerium/executable/adb.exe',
-            'cerium/executable/AdbWinApi.dll',
-            'cerium/executable/AdbWinUsbApi.dll',
         ]
     },
     include_package_data=True,

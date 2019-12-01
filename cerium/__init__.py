@@ -37,9 +37,6 @@ try:
 except AssertionError:
     raise RuntimeError('Cerium requires Python 3.6+!') from AssertionError
 
-if sys.platform != 'win32':
-    warnings.warn('Cerium only supports Windows officially! Cannot guarantee normal operation on other platforms!', RuntimeWarning)
-
 __all__ = [
     'AndroidDriver',
     'By',
