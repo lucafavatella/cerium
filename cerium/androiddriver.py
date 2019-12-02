@@ -42,59 +42,6 @@ class BaseAndroidDriver(Service):
     _temp = os.path.join(tempfile.gettempdir(), 'uidump.xml')
     _nodes = None
 
-    def get_resolution(self) -> list:
-        '''Show device resolution.'''
-        output, _ = self._execute('-s', self.device_sn, 'shell', 'wm', 'size')
-        return output.split()[2].split('x')
-
-    def get_screen_density(self) -> str:
-        '''Show device screen density (PPI).'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'wm', 'density')
-        return output.split()[2]
-
-    def get_displays_params(self) -> str:
-        '''Show displays parameters.'''
-        output, error = self._execute(
-            '-s', self.device_sn, 'shell', 'dumpsys', 'window', 'displays')
-        return output
-
-    def get_android_id(self) -> str:
-        '''Show Android ID.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'settings', 'get', 'secure', 'android_id')
-        return output.strip()
-
-    def get_android_version(self) -> str:
-        '''Show Android version.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'getprop', 'ro.build.version.release')
-        return output.strip()
-
-    def get_device_mac(self) -> str:
-        '''Show device MAC.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'cat', '/sys/class/net/wlan0/address')
-        return output.strip()
-
-    def get_cpu_info(self) -> str:
-        '''Show device CPU information.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'cat', '/proc/cpuinfo')
-        return output
-
-    def get_memory_info(self) -> str:
-        '''Show device memory information.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'cat', '/proc/meminfo')
-        return output
-
-    def get_sdk_version(self) -> str:
-        '''Show Android SDK version.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'getprop', 'ro.build.version.sdk')
-        return output.strip()
-
     def view_focused_activity(self) -> str:
         '''View focused activity.'''
         output, _ = self._execute(
