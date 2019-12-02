@@ -227,6 +227,3 @@ class BaseAndroidDriver(Service):
             elements = driver.find_elements_by_class('foo')
         '''
         return self.find_elements(by=By.CLASS, value=class_, update=update)
-
-    def __repr__(self):
-        return '<{0.__module__}.{0.__name__} (device="{1}")>'.format(type(self), self.device_sn)
