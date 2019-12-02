@@ -42,46 +42,6 @@ class BaseAndroidDriver(Service):
     _temp = os.path.join(tempfile.gettempdir(), 'uidump.xml')
     _nodes = None
 
-    # Interact with Applications
-    def _app_base_start(self, option: str, args: list or tuple) -> None:
-        '''
-        Args:
-            option:
-                -a <ACTION>
-                -c <CATEGORY>
-                -n <COMPONENT>
-        '''
-        _, error = self._execute('-s', self.device_sn,
-                                 'shell', 'am', 'start', option, *args)
-        if error and error.startswith('Error'):
-            raise ApplicationsException(error.split(':', 1)[-1].strip())
-
-    def app_start_action(self, *args) -> None:
-        '''Start action.'''
-        self._app_base_start('-a', args)
-
-    def app_start_category(self, *args) -> None:
-        '''Start category.'''
-        self._app_base_start('-c', args)
-
-    def app_start_activity(self, *args) -> None:
-        '''Start activity.'''
-        self._app_base_start('-n', args)
-
-    def app_start_service(self, *args) -> None:
-        '''Start a service.'''
-        _, error = self._execute('-s', self.device_sn,
-                                 'shell', 'am', 'startservice', *args)
-        if error and error.startswith('Error'):
-            raise ApplicationsException(error.split(':', 1)[-1].strip())
-
-    def app_stop_service(self, *args) -> None:
-        '''Stop a service'''
-        _, error = self._execute('-s', self.device_sn, 'shell',
-                                 'am', 'stopservice', *args)
-        if error and error.startswith('Error'):
-            raise ApplicationsException(error.split(':', 1)[-1].strip())
-
     def app_broadcast(self, *args) -> None:
         '''Send a broadcast.'''
         _, error = self._execute('-s', self.device_sn, 'shell',
