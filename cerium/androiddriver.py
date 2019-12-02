@@ -81,18 +81,6 @@ class BaseAndroidDriver(Service):
         '''Generate pseudo-random user events to simulate clicks, touches, gestures, etc.'''
         self._execute('-s', self.device_sn, 'shell', 'monkey', *args)
 
-    def reboot(self) -> None:
-        '''Reboot the device.'''
-        self._execute('-s', self.device_sn, 'reboot')
-
-    def recovery(self) -> None:
-        '''Reboot to recovery mode.'''
-        self._execute('-s', self.device_sn, 'reboot', 'recovery')
-
-    def fastboot(self) -> None:
-        '''Reboot to bootloader mode.'''
-        self._execute('-s', self.device_sn, 'reboot', 'bootloader')
-
     def uidump(self, local: _PATH = None) -> None:
         '''Get the current interface layout file.'''
         local = local if local else self._temp
