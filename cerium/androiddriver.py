@@ -77,10 +77,6 @@ class BaseAndroidDriver(Service):
         self._execute('-s', self.device_sn, 'shell',
                       'input', 'keyevent', '--longpress', str(keyevent))
 
-    def send_monkey(self, *args) -> None:
-        '''Generate pseudo-random user events to simulate clicks, touches, gestures, etc.'''
-        self._execute('-s', self.device_sn, 'shell', 'monkey', *args)
-
     def uidump(self, local: _PATH = None) -> None:
         '''Get the current interface layout file.'''
         local = local if local else self._temp
