@@ -42,36 +42,6 @@ class BaseAndroidDriver(Service):
     _temp = os.path.join(tempfile.gettempdir(), 'uidump.xml')
     _nodes = None
 
-    def app_broadcast(self, *args) -> None:
-        '''Send a broadcast.'''
-        _, error = self._execute('-s', self.device_sn, 'shell',
-                                 'am', 'broadcast', *args)
-        if error:
-            raise ApplicationsException(error.split(':', 1)[-1].strip())
-
-    def close_app(self, package: str) -> None:
-        '''Close an application.'''
-        self._execute('-s', self.device_sn, 'shell',
-                      'am', 'force-stop', package)
-
-    def app_trim_memory(self, pid: int or str, level: str = 'RUNNING_LOW') -> None:
-        '''Trim memory.
-
-        Args:
-            level: HIDDEN | RUNNING_MODERATE | BACKGROUNDRUNNING_LOW | \
-                     MODERATE | RUNNING_CRITICAL | COMPLETE
-        '''
-        _, error = self._execute('-s', self.device_sn, 'shell',
-                                 'am', 'send-trim-memory', str(pid), level)
-        if error and error.startswith('Error'):
-            raise ApplicationsException(error.split(':', 1)[-1].strip())
-
-    def app_start_up_time(self, package: str) -> str:
-        '''Get the time it took to launch your application.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'am', 'start', '-W', package)
-        return re.findall('TotalTime: \d+', output)[0]
-
     def screencap(self, filename: _PATH='/sdcard/screencap.png') -> None:
         '''Taking a screenshot of a device display.'''
         self._execute('-s', self.device_sn, 'shell',
