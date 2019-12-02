@@ -42,36 +42,6 @@ class BaseAndroidDriver(Service):
     _temp = os.path.join(tempfile.gettempdir(), 'uidump.xml')
     _nodes = None
 
-    def view_focused_activity(self) -> str:
-        '''View focused activity.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'dumpsys', 'activity', 'activities')
-        return re.findall(r'mFocusedActivity: .+(com[a-zA-Z0-9\.]+/.[a-zA-Z0-9\.]+)', output)[0]
-
-    def view_running_services(self, package: str='') -> str:
-        '''View running services.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'dumpsys', 'activity', 'services', package)
-        return output
-
-    def view_package_info(self, package: str='') -> str:
-        '''View package detail information.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'dumpsys', 'package', package)
-        return output
-
-    def view_current_app_behavior(self) -> str:
-        '''View application behavior in the current window.'''
-        output, _ = self._execute(
-            '-s', self.device_sn, 'shell', 'dumpsys', 'window', 'windows')
-        return re.findall(r'mCurrentFocus=.+(com[a-zA-Z0-9\.]+/.[a-zA-Z0-9\.]+)', output)[0]
-
-    def view_surface_app_activity(self) -> str:
-        '''Get package with activity of applications that are running in the foreground.'''
-        output, error = self._execute(
-            '-s', self.device_sn, 'shell', 'dumpsys', 'window', 'w')
-        return re.findall(r"name=([a-zA-Z0-9\.]+/.[a-zA-Z0-9\.]+)", output)
-
     # Interact with Applications
     def _app_base_start(self, option: str, args: list or tuple) -> None:
         '''
