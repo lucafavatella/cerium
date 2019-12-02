@@ -42,41 +42,6 @@ class BaseAndroidDriver(Service):
     _temp = os.path.join(tempfile.gettempdir(), 'uidump.xml')
     _nodes = None
 
-    def screencap(self, filename: _PATH='/sdcard/screencap.png') -> None:
-        '''Taking a screenshot of a device display.'''
-        self._execute('-s', self.device_sn, 'shell',
-                      'screencap', '-p', filename)
-
-    def pull_screencap(self, remote: _PATH = '/sdcard/screencap.png', local: _PATH = 'screencap.png') -> None:
-        '''Taking a screenshot of a device display, then copy it to your computer.'''
-        self.screencap(remote)
-        self.pull(remote, local)
-
-    def screencap_exec(self, filename: _PATH = 'screencap.png') -> None:
-        '''Taking a screenshot of a device display, then copy it to your computer.'''
-        self._execute('-s', self.device_sn, 'exec-out',
-                      'screencap', '-p', '>', filename, shell=True)
-
-    def screenrecord(self, bit_rate: int = 5000000, time_limit: int = 180, filename: _PATH = '/sdcard/demo.mp4') -> None:
-        '''Recording the display of devices running Android 4.4 (API level 19) and higher.
-
-        Args:
-            bit_rate:You can increase the bit rate to improve video quality, but doing so results in larger movie files.
-            time_limit: Sets the maximum recording time, in seconds, and the maximum value is 180 (3 minutes).
-        '''
-        self._execute('-s', self.device_sn, 'shell',
-                      'screenrecord', '--bit-rate', str(bit_rate), '--time-limit', str(time_limit), filename)
-
-    def pull_screenrecord(self, bit_rate: int = 5000000, time_limit: int = 180, remote: _PATH = '/sdcard/demo.mp4', local: _PATH = 'demo.mp4') -> None:
-        '''Recording the display of devices running Android 4.4 (API level 19) and higher. Then copy it to your computer.
-
-        Args:
-            bit_rate:You can increase the bit rate to improve video quality, but doing so results in larger movie files.
-            time_limit: Sets the maximum recording time, in seconds, and the maximum value is 180 (3 minutes).
-        '''
-        self.screenrecord(bit_rate, time_limit, filename=remote)
-        self.pull(remote, local)
-
     def click(self, x: int, y: int) -> None:
         '''Simulate finger click.'''
         self._execute('-s', self.device_sn, 'shell',
