@@ -30,7 +30,6 @@ from .exceptions import (ApplicationsException, CharactersException,
                          DeviceConnectionException, NoSuchElementException,
                          NoSuchPackageException)
 from .intent import Actions, Category
-from .keys import Keys
 from .service import _PATH, Service
 from .utils import merge_dict
 
@@ -66,16 +65,6 @@ class BaseAndroidDriver(Service):
         text = re.escape(text)
         self._execute('-s', self.device_sn, 'shell',
                       'input', 'text', text)
-
-    def send_keyevents(self, keyevent: int) -> None:
-        '''Simulates typing keyevents.'''
-        self._execute('-s', self.device_sn, 'shell',
-                      'input', 'keyevent', str(keyevent))
-
-    def send_keyevents_long_press(self, keyevent: int) -> None:
-        '''Simulates typing keyevents long press.'''
-        self._execute('-s', self.device_sn, 'shell',
-                      'input', 'keyevent', '--longpress', str(keyevent))
 
     def uidump(self, local: _PATH = None) -> None:
         '''Get the current interface layout file.'''
